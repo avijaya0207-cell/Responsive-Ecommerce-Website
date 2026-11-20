@@ -289,24 +289,34 @@ function removeItem(index) {
     cart.splice(index, 1);
     updateCart();
 }
-
-function checkout() {
+async function checkout() {
     if (cart.length === 0) {
         alert("Your cart is empty!");
-    } else {
-        alert("Thank you for shopping with ShopEase!");
+        return;
     }
+
+    try {
+        await window.saveOrder(cart);
+        alert("Order placed successfully!");
+        cart = [];
+        updateCart();
+    } catch (error) {
+        console.error(error);
+        alert("Order failed. Please try again!");
+    }
+}
+
 }
 </script>
   <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
-
 import {
   getFirestore,
   collection,
-  getDocs
+  getDocs,
+  addDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
-
 const firebaseConfig = {
   apiKey: "AIzaSyBMud17v_fYFpyLzOVYEYM96TjFRZoEB4",
   authDomain: "shopease-ecommerce-954d1.firebaseapp.com",
@@ -315,9 +325,18 @@ const firebaseConfig = {
   messagingSenderId: "588559146246",
   appId: "1:588559146246:web:0957bb68749fde17aa9287"
 };
+async function saveOrder(items) {
+    const total = items.reduce((sum, item) => sum + Number(item.price), 0);
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+    await addDoc(collection(db, "orders"), {
+        items: items,
+        total: total,
+        createdAt: serverTimestamp()
+    });
+}
+
+window.saveOrder = saveOrder;
+
 
 async function loadProducts() {
   try {
