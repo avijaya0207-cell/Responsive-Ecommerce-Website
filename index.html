@@ -298,25 +298,66 @@ function checkout() {
     }
 }
 </script>
-    <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
-  import { getFirestore } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBMudw17v_fYFpyLzOVYEYM96TjFRZoEB4",
-    authDomain: "shopease-ecommerce-954d1.firebaseapp.com",
-    projectId: "shopease-ecommerce-954d1",
-    storageBucket: "shopease-ecommerce-954d1.firebasestorage.app",
-    messagingSenderId: "588559146246",
-    appId: "1:588559146246:web:0957bb68749fde17aa9287"
-  };
+import {
+  getFirestore,
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+const firebaseConfig = {
+  apiKey: "AIzaSyBMud17v_fYFpyLzOVYEYM96TjFRZoEB4",
+  authDomain: "shopease-ecommerce-954d1.firebaseapp.com",
+  projectId: "shopease-ecommerce-954d1",
+  storageBucket: "shopease-ecommerce-954d1.firebasestorage.app",
+  messagingSenderId: "588559146246",
+  appId: "1:588559146246:web:0957bb68749fde17aa9287"
+};
 
-  window.db = db;
-  console.log("Firebase connected successfully!");
-    </script>
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function loadProducts() {
+  try {
+    const snapshot = await getDocs(collection(db, "products"));
+    const container = document.querySelector(".products");
+
+    snapshot.forEach((doc) => {
+      const product = doc.data();
+
+      const card = document.createElement("div");
+      card.className = "product";
+
+      const img = document.createElement("img");
+      img.src = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500";
+
+      const name = document.createElement("h3");
+      name.textContent = product.name;
+
+      const price = document.createElement("p");
+      price.className = "price";
+      price.textContent = "₹" + product.price;
+
+      const button = document.createElement("button");
+      button.textContent = "Add to Cart";
+      button.onclick = function() {
+        window.addToCart(product.name, product.price);
+      };
+
+      card.append(img, name, price, button);
+      container.appendChild(card);
+    });
+
+    console.log("Firebase products loaded!");
+  } catch (error) {
+    console.error("Firebase error:", error);
+  }
+}
+
+loadProducts();
+  </script>  
 
 </body>
           </html>
