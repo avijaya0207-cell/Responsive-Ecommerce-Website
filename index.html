@@ -298,6 +298,25 @@ function checkout() {
     }
 }
 </script>
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+  import { getFirestore } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBMudw17v_fYFpyLzOVYEYM96TjFRZoEB4",
+    authDomain: "shopease-ecommerce-954d1.firebaseapp.com",
+    projectId: "shopease-ecommerce-954d1",
+    storageBucket: "shopease-ecommerce-954d1.firebasestorage.app",
+    messagingSenderId: "588559146246",
+    appId: "1:588559146246:web:0957bb68749fde17aa9287"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.db = db;
+  console.log("Firebase connected successfully!");
+    </script>
 
 </body>
           </html>
